@@ -29,24 +29,3 @@ func routerWebsocket(r *mux.Router) {
 		handlers.ServeWs(hub, w, r)
 	})
 }
-
-// func serveWs(w http.ResponseWriter, r *http.Request) {
-// 	socket, err := upgrader.Upgrade(w, r, nil)
-// 	if err != nil {
-// 		log.Panic(err)
-// 	}
-// 	for {
-// 		msgType, msg, err := socket.ReadMessage()
-// 		if err != nil {
-// 			log.Panic(err)
-// 			return
-// 		}
-// 		fmt.Println("Mensagem recebida: ", string(msg))
-
-// 		err = socket.WriteMessage(msgType, msg)
-// 		if err != nil {
-// 			log.Panic(err)
-// 			return
-// 		}
-// 	}
-// }
