@@ -15,3 +15,5 @@
 configurations/configuration.pro.json
 go.sum
 command/go-stunning-garbanzo
+
+.vscode/*

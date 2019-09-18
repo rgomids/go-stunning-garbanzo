@@ -2,6 +2,7 @@ package configurations
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 )
@@ -21,15 +22,24 @@ func NewServerConf() *ServerConf {
 func (sc *ServerConf) LoadConfiguration() (err error) {
 	defer func() {
 		if err != nil {
-			log.Fatal("Error loading Configurations", err)
+			log.Fatal("Error loading Configurations: ", err)
 		}
 	}()
 	// TODO: Criar forma de trocar a variaveld e ambiente
-	confFile, err := os.Open("configurations/configuration.dev.json")
-	if err != nil {
-		return
+	var confFile *os.File
+	if confFile, err = os.Open("configurations/configuration.dev.json"); err == nil {
+		confDecoded := json.NewDecoder(confFile)
+		err = confDecoded.Decode(&sc)
+	} else {
+		ipAddress := os.Getenv("SERVER_ADDRESS")
+		port := os.Getenv("SERVER_PORT")
+		if ipAddress != "" && port != "" {
+			err = nil
+			sc.IPAddress = ipAddress
+			sc.Port = port
+		} else {
+			err = fmt.Errorf("%v -> %s", err, "Configuration file not exist and environment variables are not set")
+		}
 	}
-	confDecoded := json.NewDecoder(confFile)
-	err = confDecoded.Decode(&sc)
 	return
 }

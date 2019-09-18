@@ -7,5 +7,5 @@ import (
 )
 
 func cardRoutes(r *mux.Router) {
-	r.HandleFunc("/cards", handlers.GetAllCards).Methods("GET")
+	r.HandleFunc("/api/cards", handlers.GetAllCards).Methods("GET")
 }

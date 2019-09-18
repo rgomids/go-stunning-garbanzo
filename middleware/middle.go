@@ -3,6 +3,7 @@ package middleware
 import (
 	"log"
 	"net/http"
+	"strings"
 )
 
 func loggingMiddleware(next http.Handler) http.Handler {
@@ -12,14 +13,25 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// HTTP ...
-func HTTP(next http.Handler) http.Handler {
+func Middleware(next http.Handler) http.Handler {
 	return loggingMiddleware(
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// Do stuff here
-			// ...
-			// Call the next handler, which can be another middleware in the chain, or the final handler.
+			urlSplited := strings.Split(r.URL.String(), "/")
+			switch urlSplited[1] {
+			case "api":
+				midHTTP(w, r)
+			case "ws":
+				midWS(w, r)
+			}
 			next.ServeHTTP(w, r)
 		}),
 	)
+}
+
+func midHTTP(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func midWS(w http.ResponseWriter, r *http.Request) {
+
 }

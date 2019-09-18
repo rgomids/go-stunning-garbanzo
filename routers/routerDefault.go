@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"go-stunning-garbanzo/middleware"
+	m "go-stunning-garbanzo/middleware"
 
 	"github.com/gorilla/mux"
 )
@@ -9,7 +9,8 @@ import (
 // Router ...
 func Router() *mux.Router {
 	r := mux.NewRouter()
-	cardRoutes(r)
-	r.Use(middleware.HTTP)
+	routerHTTP(r)
+	routerWebsocket(r)
+	r.Use(m.Middleware)
 	return r
 }
