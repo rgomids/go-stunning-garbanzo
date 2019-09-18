@@ -11,5 +11,7 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# Project files
 configurations/configuration.pro.json
 go.sum
+command/go-stunning-garbanzo
