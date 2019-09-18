@@ -13,6 +13,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+// Middleware ...
 func Middleware(next http.Handler) http.Handler {
 	return loggingMiddleware(
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
