@@ -12,3 +12,4 @@
 *.out
 
 configurations/configuration.pro.json
+go.sum
