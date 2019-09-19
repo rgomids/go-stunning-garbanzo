@@ -2,10 +2,16 @@ package handlers
 
 import (
 	"fmt"
+	"go-stunning-garbanzo/server"
 	"net/http"
 )
 
-// GetAllCards ...
-func GetAllCards(rsw http.ResponseWriter, req *http.Request) {
-	fmt.Println("Listando todos os cards")
+// GetAllCardsHTTP ...
+func GetAllCardsHTTP(rsw http.ResponseWriter, req *http.Request) {
+
+}
+
+// GetAllCardsWS ...
+func GetAllCardsWS(message *server.EventMessage) {
+	fmt.Println("Chegou")
 }

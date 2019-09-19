@@ -2,30 +2,30 @@ package routers
 
 import (
 	"go-stunning-garbanzo/handlers"
+	"go-stunning-garbanzo/server"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/gorilla/websocket"
 )
 
 var (
-	upgrader = websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
-		CheckOrigin:     func(r *http.Request) bool { return true },
-	}
-	hub *handlers.Hub
+	hub *server.EventHub
 )
 
 func init() {
 	log.Println("Starting Websocket Hub")
-	hub = handlers.NewHub()
+	hub = server.NewEventHub()
 	go hub.Run()
 }
 
 func routerWebsocket(r *mux.Router) {
+	eventHandlerRegistry()
 	r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		handlers.ServeWs(hub, w, r)
 	})
+}
+
+func eventHandlerRegistry() {
+	hub.AddHandler("GET_CARDS", handlers.GetAllCardsWS)
 }
