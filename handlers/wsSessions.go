@@ -22,6 +22,7 @@ func ServeWs(hub *server.EventHub, w http.ResponseWriter, r *http.Request) {
 	}
 	newClientSes := server.NewClientSession()
 	newClientSes.WebsocketConnection = wsConn
+	newClientSes.EventsHub = hub
 	go newClientSes.WriteToSocket()
 	newClientSes.ReadFromSocket()
 }

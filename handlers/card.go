@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"go-stunning-garbanzo/server"
 	"net/http"
 )
@@ -13,5 +12,5 @@ func GetAllCardsHTTP(rsw http.ResponseWriter, req *http.Request) {
 
 // GetAllCardsWS ...
 func GetAllCardsWS(message *server.EventMessage) {
-	fmt.Println("Chegou")
+	message.Client.SendResponse <- []byte(message.Data.(string))
 }

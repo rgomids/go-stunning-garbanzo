@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"go-stunning-garbanzo/utils"
 	"log"
 
@@ -18,6 +19,8 @@ type ClientSession struct {
 	SendResponse chan []byte
 	// FinishClientSession finaliza o hub de operação dele
 	FinishClientSession chan bool
+	// Este cara vai receber a solicitação e vai trata-la
+	EventsHub *EventHub
 }
 
 // NewClientSession cria uum novo usuário
@@ -37,8 +40,9 @@ func (cs *ClientSession) ReadFromSocket() {
 		if err != nil {
 			log.Println(err)
 		}
+		cs.SendResponse <- []byte(fmt.Sprintf("%s está sendo processada", eventMessageRaw.Event))
 		eventMessageRaw.Client = cs
-		cs.SendResponse <- []byte(eventMessageRaw.Event)
+		cs.EventsHub.Messaging <- eventMessageRaw
 	}
 }
 
