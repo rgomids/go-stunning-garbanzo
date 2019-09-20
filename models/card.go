@@ -17,18 +17,18 @@ type Card struct {
 
 // Mana é a estrutura com o conjunto de manas de um Card
 type Mana struct {
-	Any   int8
-	Black int8
-	Blue  int8
-	Green int8
-	Red   int8
-	White int8
+	Any   int8 `json:"any"`
+	Black int8 `json:"black"`
+	Blue  int8 `json:"blue"`
+	Green int8 `json:"green"`
+	Red   int8 `json:"red"`
+	White int8 `json:"white"`
 }
 
 // Image é a estrutura com os detalhes da imagem do Card
 type Image struct {
-	Path   string
-	Author string
+	Path   string `json:"path"`
+	Author string `json:"author"`
 }
 
 // NewCard retorna um novo card
@@ -49,7 +49,7 @@ CreateCard cria um novo card no banco
 @return err error - Erro que foi gerado ao tentar criar card
 */
 func CreateCard(newCard *Card) (id string, err error) {
-	return
+	return NewCard().ID, nil
 }
 
 /*
@@ -60,15 +60,15 @@ GetCard busca por um card
 @return err error - Erro que foi gerado ao tentar encontrar o card
 */
 func GetCard(idCard string) (card *Card, err error) {
-	return
+	return NewCard(), nil
 }
 
 /*
-GetCardS busca por todos os cards
+GetCards busca por todos os cards
 
 @param idCard string - ID do card que está buscando
 @return card *Card - Objeto do card que foi buscado
-@return err error - Erro que foi gerado ao tentar encontrar o card
+@return err error - Erro que foi gerado ao tentar encontrar os cards
 */
 func GetCards() (cards []*Card, err error) {
 	for i := 0; i < 10000; i++ {
@@ -77,10 +77,24 @@ func GetCards() (cards []*Card, err error) {
 	return
 }
 
-func UpdateCard() (id string, err error) {
-	return
+/*
+UpdateCard busca por todos os cards
+
+@param card *Card - Card que será atualizado
+@return id string - ID do objeto do card que foi atualizado
+@return err error - Erro que foi gerado ao tentar atualizar o card
+*/
+func UpdateCard(card *Card) (id string, err error) {
+	return card.ID, nil
 }
 
-func DeleteCard() (id string, err error) {
-	return
+/*
+DeleteCard busca por todos os cards
+
+@param cardID string - ID do card que será apagado
+@return id string - ID do objeto do card que foi apagado
+@return err error - Erro que foi gerado ao tentar atualizar o card
+*/
+func DeleteCard(cardID string) (id string, err error) {
+	return cardID, nil
 }

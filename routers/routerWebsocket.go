@@ -27,5 +27,5 @@ func routerWebsocket(r *mux.Router) {
 }
 
 func eventHandlerRegistry() {
-	hub.AddHandler("GET_CARDS", handlers.GetAllCardsWS)
+	cardRoutesWS(hub)
 }

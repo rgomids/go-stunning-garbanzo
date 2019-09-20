@@ -6,5 +6,5 @@ import (
 
 func routerHTTP(r *mux.Router) {
 	viewRoutes(r)
-	cardRoutes(r)
+	cardRoutesHTTP(r)
 }
