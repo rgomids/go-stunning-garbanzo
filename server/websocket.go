@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"go-stunning-garbanzo/utils"
 	"log"
@@ -32,6 +33,16 @@ func NewClientSession() *ClientSession {
 	}
 }
 
+// SendMessage envia uma mensagem no padrão EventMessage para o Client
+func (cs *ClientSession) SendMessage(message *EventMessage) {
+	msg, err := json.Marshal(message)
+	if err != nil {
+		log.Printf("[ERRO] Ao codificar mensagem: %v", err)
+		return
+	}
+	cs.SendResponse <- msg
+}
+
 // ReadFromSocket Pega as mensagens que vem do websocket
 func (cs *ClientSession) ReadFromSocket() {
 	eventMessageRaw := &EventMessage{}
@@ -40,7 +51,7 @@ func (cs *ClientSession) ReadFromSocket() {
 		if err != nil {
 			log.Println(err)
 		}
-		cs.SendResponse <- []byte(fmt.Sprintf("%s está sendo processada", eventMessageRaw.Event))
+		cs.SendResponse <- []byte(fmt.Sprintf("{\"event\":\"%s\", \"message\": \"Está sendo processada\"}", eventMessageRaw.Event))
 		eventMessageRaw.Client = cs
 		cs.EventsHub.Messaging <- eventMessageRaw
 	}

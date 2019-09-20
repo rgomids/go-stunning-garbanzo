@@ -16,6 +16,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 func Middleware(next http.Handler) http.Handler {
 	return loggingMiddleware(
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
 			next.ServeHTTP(w, r)
 		}),
 	)
