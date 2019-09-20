@@ -8,11 +8,11 @@ import (
 )
 
 func cardRoutesHTTP(r *mux.Router) {
-	r.HandleFunc("/api/card", handlers.AddCardHTTP).Methods("POST")
-	r.HandleFunc("/api/card/{id}", handlers.GetCardHTTP).Methods("GET")
-	r.HandleFunc("/api/cards", handlers.GetAllCardsHTTP).Methods("GET")
-	r.HandleFunc("/api/card/{id}", handlers.UpdateCardHTTP).Methods("PUT")
-	r.HandleFunc("/api/card/{id}", handlers.DeleteCardHTTP).Methods("DELETE")
+	r.HandleFunc("/card", handlers.AddCardHTTP).Methods("POST")
+	r.HandleFunc("/card/{id}", handlers.GetCardHTTP).Methods("GET")
+	r.HandleFunc("/cards", handlers.GetAllCardsHTTP).Methods("GET")
+	r.HandleFunc("/card/{id}", handlers.UpdateCardHTTP).Methods("PUT")
+	r.HandleFunc("/card/{id}", handlers.DeleteCardHTTP).Methods("DELETE")
 }
 
 func cardRoutesWS(h *server.EventHub) {

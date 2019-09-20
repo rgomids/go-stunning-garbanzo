@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -59,15 +60,50 @@ func AddCardWS(message *server.EventMessage) {
 	message.Client.SendMessage(&server.EventMessage{Event: "ADD_CARD_SUCCESSFUL", Data: cardID})
 }
 
-func getCard(card *models.Card) (string, error) {
-	return models.CreateCard(card)
+func getCard(idCard string) (*models.Card, error) {
+	return models.GetCard(idCard)
 }
 
 // GetCardHTTP ...
-func GetCardHTTP(rsw http.ResponseWriter, req *http.Request) {}
+func GetCardHTTP(rsw http.ResponseWriter, req *http.Request) {
+	cardID := mux.Vars(req)["id"]
+	if cardID == "" {
+		http.Error(rsw, "Necessário passar o ID do Card", http.StatusBadRequest)
+		return
+	}
+
+	card, err := getCard(cardID)
+	if err != nil {
+		http.Error(rsw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	cardJSON, err := json.Marshal(card)
+	if err != nil {
+		http.Error(rsw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rsw.Write(cardJSON)
+}
 
 // GetCardWS ...
-func GetCardWS(message *server.EventMessage) {}
+func GetCardWS(message *server.EventMessage) {
+	cardID := message.Data.(string)
+	if cardID == "" {
+		message.Client.SendMessage(&server.EventMessage{Event: "BAD_REQUEST", Data: "Necessário passar o ID do Card"})
+		return
+	}
+
+	card, err := getCard(cardID)
+	if err != nil {
+		message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR", Data: nil})
+		return
+	}
+
+	message.Client.SendMessage(&server.EventMessage{Event: "GET_CARD_SUCCESSFUL", Data: card})
+
+}
 
 func getCards() ([]*models.Card, error) {
 	cardsRaw, err := models.GetCards()
