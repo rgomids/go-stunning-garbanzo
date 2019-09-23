@@ -17,7 +17,7 @@ func AddCardHTTP(rsw http.ResponseWriter, req *http.Request) {
 	var err error
 	defer func() {
 		if err != nil {
-			log.Printf("[ERRO] Adding Card: %v", err)
+			log.Printf("[ERRO] Adding Card: %v\n", err)
 			http.Error(rsw, "Error adding card", http.StatusInternalServerError)
 		}
 	}()
@@ -47,7 +47,7 @@ func AddCardWS(message *server.EventMessage) {
 	var err error
 	defer func() {
 		if err != nil {
-			log.Printf("[ERRO] Adding Card: %v", err)
+			log.Printf("[ERRO] Adding Card: %v\n", err)
 			message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
 		}
 	}()
@@ -71,7 +71,7 @@ func GetCardHTTP(rsw http.ResponseWriter, req *http.Request) {
 	var err error
 	defer func() {
 		if err != nil {
-			log.Printf("[ERRO] Getting Card: %v", err)
+			log.Printf("[ERRO] Getting Card: %v\n", err)
 			http.Error(rsw, "Error getting card", http.StatusInternalServerError)
 		}
 	}()
@@ -100,7 +100,7 @@ func GetCardWS(message *server.EventMessage) {
 	var err error
 	defer func() {
 		if err != nil {
-			log.Printf("[ERRO] Getting Card: %v", err)
+			log.Printf("[ERRO] Getting Card: %v\n", err)
 			message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
 		}
 	}()
@@ -125,7 +125,7 @@ func GetAllCardsHTTP(rsw http.ResponseWriter, req *http.Request) {
 	var err error
 	defer func() {
 		if err != nil {
-			log.Printf("[ERRO] Getting Cards: %v", err)
+			log.Printf("[ERRO] Getting Cards: %v\n", err)
 			http.Error(rsw, "Error getting cards", http.StatusInternalServerError)
 		}
 	}()
@@ -154,7 +154,7 @@ func GetAllCardsWS(message *server.EventMessage) {
 	var err error
 	defer func() {
 		if err != nil {
-			log.Printf("[ERRO] Getting Cards: %v", err)
+			log.Printf("[ERRO] Getting Cards: %v\n", err)
 			message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
 		}
 	}()
@@ -177,7 +177,7 @@ func UpdateCardHTTP(rsw http.ResponseWriter, req *http.Request) {
 	var err error
 	defer func() {
 		if err != nil {
-			log.Printf("[ERRO] Updating Cards: %v", err)
+			log.Printf("[ERRO] Updating Cards: %v\n", err)
 			http.Error(rsw, "Error updating cards", http.StatusInternalServerError)
 		}
 	}()
@@ -207,7 +207,7 @@ func UpdateCardWS(message *server.EventMessage) {
 	var err error
 	defer func() {
 		if err != nil {
-			log.Printf("[ERRO] Updating Cards: %v", err)
+			log.Printf("[ERRO] Updating Cards: %v\n", err)
 			message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
 		}
 	}()
@@ -231,7 +231,7 @@ func DeleteCardHTTP(rsw http.ResponseWriter, req *http.Request) {
 	var err error
 	defer func() {
 		if err != nil {
-			log.Printf("[ERRO] Deleting Cards: %v", err)
+			log.Printf("[ERRO] Deleting Cards: %v\n", err)
 			http.Error(rsw, "Error deleting cards", http.StatusInternalServerError)
 		}
 	}()
@@ -255,7 +255,7 @@ func DeleteCardWS(message *server.EventMessage) {
 	var err error
 	defer func() {
 		if err != nil {
-			log.Printf("[ERRO] Deleting Cards: %v", err)
+			log.Printf("[ERRO] Deleting Cards: %v\n", err)
 			message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
 		}
 	}()

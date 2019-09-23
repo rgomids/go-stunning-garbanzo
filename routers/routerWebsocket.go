@@ -14,7 +14,7 @@ var (
 )
 
 func init() {
-	log.Println("Starting Websocket Hub")
+	log.Println("[INFO] Starting Websocket Hub")
 	hub = server.NewEventHub()
 	go hub.Run()
 }

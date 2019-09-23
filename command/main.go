@@ -25,7 +25,7 @@ func newRuntime() *runtime {
 }
 
 func (rt *runtime) loadConfiguration() {
-	log.Println("Loading Configurations")
+	log.Println("[INFO] Loading Configurations")
 	rt.conf = configurations.NewServerConf()
 	rt.conf.LoadConfiguration()
 	rt.Addr = fmt.Sprintf("%s%s", rt.conf.IPAddress, rt.conf.Port)
@@ -35,13 +35,13 @@ func (rt *runtime) loadConfiguration() {
 }
 
 func main() {
-	log.Println("Starting API")
+	log.Println("[INFO] Starting API")
 	rt := newRuntime()
 	// Carrega as configurações da API
 	rt.loadConfiguration()
 	// Inicia o servidor HTTP
 	rt.wg.Add(1)
-	log.Println("Starting HTTP server")
+	log.Println("[INFO] Starting HTTP server")
 	go rt.serveHTTP(routers.Router())
 	rt.wg.Wait()
 }
@@ -49,6 +49,6 @@ func main() {
 func (rt *runtime) serveHTTP(routerHandles *mux.Router) {
 	defer rt.wg.Done()
 	rt.Handler = routerHandles
-	log.Printf("HTTP server started at \"%s%s\"\n", rt.conf.IPAddress, rt.conf.Port)
+	log.Printf("[INFO] HTTP server started at \"%s%s\"\n", rt.conf.IPAddress, rt.conf.Port)
 	log.Fatal(rt.ListenAndServe())
 }

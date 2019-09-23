@@ -37,7 +37,7 @@ func NewClientSession() *ClientSession {
 func (cs *ClientSession) SendMessage(message *EventMessage) {
 	msg, err := json.Marshal(message)
 	if err != nil {
-		log.Printf("[ERRO] Ao codificar mensagem: %v", err)
+		log.Printf("[ERRO] SendMessage can't marshal message: %v", err)
 		return
 	}
 	cs.SendResponse <- msg
@@ -49,9 +49,10 @@ func (cs *ClientSession) ReadFromSocket() {
 	for {
 		err := cs.WebsocketConnection.ReadJSON(eventMessageRaw)
 		if err != nil {
-			log.Println(err)
+			log.Printf("[ERRO] ReadFromSocket can't read message: %v\n", err)
 		}
-		cs.SendResponse <- []byte(fmt.Sprintf("{\"event\":\"%s\", \"message\": \"Está sendo processada\"}", eventMessageRaw.Event))
+		cs.SendResponse <- []byte(fmt.Sprintf(`{"event": "%s_PROCESSING"}`, eventMessageRaw.Event))
+		go log.Panicf("[WS] New Event: %s\n", eventMessageRaw.Event)
 		eventMessageRaw.Client = cs
 		cs.EventsHub.Messaging <- eventMessageRaw
 	}
@@ -67,11 +68,11 @@ func (cs *ClientSession) WriteToSocket() {
 		select {
 		case message, isOk := <-cs.SendResponse:
 			if !isOk {
-				// Fazer algo, pois aconteceu um problema ao coletar a mensagem
+				log.Printf("[ERRO] WriteToSocket can't get message: %+v", cs.ID)
 			}
 			// Nessa parte deve ser utilizado a conexão
 			cs.WebsocketConnection.WriteMessage(websocket.TextMessage, message)
-		// Aqui a sessão dop cliente é fechada
+		// Aqui a sessão do cliente é fechada
 		case <-cs.FinishClientSession:
 			return
 		}
@@ -130,6 +131,7 @@ func (eh *EventHub) AddHandler(event string, f func(*EventMessage)) {
 func (eh *EventHub) Run() {
 	defer func() {
 		close(eh.Messaging)
+		close(eh.Finish)
 	}()
 	for {
 		select {
@@ -154,6 +156,6 @@ func EventDispatcher(handlers *EventHandlers, message *EventMessage) {
 	if f, ok := handlers.HandlerList[message.Event]; ok {
 		f(message)
 	} else {
-		message.Client.SendResponse <- []byte("Operação não encontrada")
+		message.Client.SendMessage(&EventMessage{Event: "EVENT_NOT_FOUND"})
 	}
 }
