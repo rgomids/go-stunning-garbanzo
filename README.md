@@ -2,7 +2,7 @@
 🌀 API com dupla implementação, sendo possível realizar chamadas via HTTP e Websocket.
 
 ## Configurar
-Para configurar o projeto em sua maquina tenha a verso do `go` >= `go1.12`;
+Para configurar o projeto em sua maquina tenha a versão do `go` >= `go1.12`;
 Utilize `go get` para abaixar todas as dependências;
 Para inciar o server:
  - *Run*: Basta estar na pasta raiz do projeto e usar o comando: `make run`;
