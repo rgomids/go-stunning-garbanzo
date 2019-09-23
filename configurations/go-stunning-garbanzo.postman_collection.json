@@ -1,0 +1,205 @@
+{
+	"info": {
+		"_postman_id": "9cc77c53-569d-4c8e-a4e8-97b1a034ff88",
+		"name": "go-stunning-garbanzo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "card",
+			"item": [
+				{
+					"name": "Lista todos os cards",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/cards",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"cards"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Adicionar um card",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"\",\n    \"mana_cost\": {\n        \"any\": 0,\n        \"black\": 0,\n        \"blue\": 0,\n        \"green\": 0,\n        \"red\": 0,\n        \"white\": 0\n    },\n    \"image\": {\n        \"path\": \"\",\n        \"author\": \"\"\n    },\n    \"type\": \"\",\n    \"spells\": {},\n    \"detail\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/card",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"card"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lista um card pelo ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/card/:card_id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"card",
+								":card_id"
+							],
+							"variable": [
+								{
+									"key": "card_id",
+									"value": "01DNF9X87YHG19QM8F2VN9YQZ2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Atualiza um card",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": \"01DNF9X87YHG19QM8F2VN9YQZ2\",\n    \"name\": \"\",\n    \"mana_cost\": {\n        \"any\": 0,\n        \"black\": 0,\n        \"blue\": 0,\n        \"green\": 0,\n        \"red\": 0,\n        \"white\": 0\n    },\n    \"image\": {\n        \"path\": \"\",\n        \"author\": \"\"\n    },\n    \"type\": \"\",\n    \"spells\": {},\n    \"detail\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/card/:card_id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"card",
+								":card_id"
+							],
+							"variable": [
+								{
+									"key": "card_id",
+									"value": "01DNF9X87YHG19QM8F2VN9YQZ2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Apaga um card",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/card/:card_id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"card",
+								":card_id"
+							],
+							"variable": [
+								{
+									"key": "card_id",
+									"value": "01DNF9X87YHG19QM8F2VN9YQZ2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "5af1fa4c-dbc6-41af-acad-c7d3e4d78300",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "1632bf5b-e846-4784-a8b8-4612d09b529f",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "0c37a964-ea1c-4bc5-8bc1-bee45bb856c6",
+			"key": "protocol",
+			"value": "http",
+			"type": "string"
+		},
+		{
+			"id": "734216e5-6bc1-492c-80b0-553522dd1792",
+			"key": "host",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"id": "94546296-1c96-4ee7-825a-a4950ac2c73f",
+			"key": "port",
+			"value": "8080",
+			"type": "string"
+		},
+		{
+			"id": "f453ed25-f135-442b-a647-bdcd6e7386c5",
+			"key": "url",
+			"value": "{{protocol}}://{{host}}:{{port}}",
+			"type": "string"
+		}
+	]
+}

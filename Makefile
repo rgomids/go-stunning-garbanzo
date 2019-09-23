@@ -2,7 +2,7 @@ build:
 	@cd command; \
 	go build -v -o go-stunning-garbanzo
 
-buildRun: build
+br: build
 	@./command/go-stunning-garbanzo
 
 run:

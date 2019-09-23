@@ -93,7 +93,7 @@ DeleteCard busca por todos os cards
 
 @param cardID string - ID do card que será apagado
 @return id string - ID do objeto do card que foi apagado
-@return err error - Erro que foi gerado ao tentar atualizar o card
+@return err error - Erro que foi gerado ao tentar apagar o card
 */
 func DeleteCard(cardID string) (id string, err error) {
 	return cardID, nil
