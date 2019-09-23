@@ -18,7 +18,7 @@ var upgrader = websocket.Upgrader{
 func ServeWs(hub *server.EventHub, w http.ResponseWriter, r *http.Request) {
 	wsConn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("[ERRO] Creating websocket session: %v", err)
 	}
 	newClientSes := server.NewClientSession()
 	newClientSes.WebsocketConnection = wsConn

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"go-stunning-garbanzo/models"
 	"go-stunning-garbanzo/server"
 	"io/ioutil"
@@ -13,29 +12,30 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-func addCard(card *models.Card) (string, error) {
-	return models.CreateCard(card)
-}
-
 // AddCardHTTP ...
 func AddCardHTTP(rsw http.ResponseWriter, req *http.Request) {
+	var err error
+	defer func() {
+		if err != nil {
+			log.Printf("[ERRO] Adding Card: %v\n", err)
+			http.Error(rsw, "Error adding card", http.StatusInternalServerError)
+		}
+	}()
+
 	cardRaw, err := ioutil.ReadAll(req.Body)
 	defer req.Body.Close()
 	if err != nil {
-		http.Error(rsw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	var card models.Card
 	err = json.Unmarshal(cardRaw, &card)
 	if err != nil {
-		http.Error(rsw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	cardID, err := addCard(&card)
+	cardID, err := models.CreateCard(&card)
 	if err != nil {
-		http.Error(rsw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -44,43 +44,51 @@ func AddCardHTTP(rsw http.ResponseWriter, req *http.Request) {
 
 // AddCardWS ...
 func AddCardWS(message *server.EventMessage) {
+	var err error
+	defer func() {
+		if err != nil {
+			log.Printf("[ERRO] Adding Card: %v\n", err)
+			message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
+		}
+	}()
 	var card models.Card
-	err := mapstructure.Decode(message.Data, &card)
+
+	err = mapstructure.Decode(message.Data, &card)
 	if err != nil {
-		message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR", Data: nil})
 		return
 	}
 
-	cardID, err := addCard(&card)
+	cardID, err := models.CreateCard(&card)
 	if err != nil {
-		message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR", Data: nil})
 		return
 	}
 
 	message.Client.SendMessage(&server.EventMessage{Event: "ADD_CARD_SUCCESSFUL", Data: cardID})
 }
 
-func getCard(idCard string) (*models.Card, error) {
-	return models.GetCard(idCard)
-}
-
 // GetCardHTTP ...
 func GetCardHTTP(rsw http.ResponseWriter, req *http.Request) {
+	var err error
+	defer func() {
+		if err != nil {
+			log.Printf("[ERRO] Getting Card: %v\n", err)
+			http.Error(rsw, "Error getting card", http.StatusInternalServerError)
+		}
+	}()
+
 	cardID := mux.Vars(req)["id"]
 	if cardID == "" {
-		http.Error(rsw, "Necessário passar o ID do Card", http.StatusBadRequest)
+		http.Error(rsw, "Card ID is null", http.StatusBadRequest)
 		return
 	}
 
-	card, err := getCard(cardID)
+	card, err := models.GetCard(cardID)
 	if err != nil {
-		http.Error(rsw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	cardJSON, err := json.Marshal(card)
 	if err != nil {
-		http.Error(rsw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -89,15 +97,22 @@ func GetCardHTTP(rsw http.ResponseWriter, req *http.Request) {
 
 // GetCardWS ...
 func GetCardWS(message *server.EventMessage) {
+	var err error
+	defer func() {
+		if err != nil {
+			log.Printf("[ERRO] Getting Card: %v\n", err)
+			message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
+		}
+	}()
+
 	cardID := message.Data.(string)
 	if cardID == "" {
-		message.Client.SendMessage(&server.EventMessage{Event: "BAD_REQUEST", Data: "Necessário passar o ID do Card"})
+		message.Client.SendMessage(&server.EventMessage{Event: "BAD_REQUEST", Data: "Card ID is null"})
 		return
 	}
 
-	card, err := getCard(cardID)
+	card, err := models.GetCard(cardID)
 	if err != nil {
-		message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR", Data: nil})
 		return
 	}
 
@@ -105,36 +120,29 @@ func GetCardWS(message *server.EventMessage) {
 
 }
 
-func getCards() ([]*models.Card, error) {
-	cardsRaw, err := models.GetCards()
-	if err != nil {
-		return nil, fmt.Errorf("Erro ao tentar coletar cards: %v", err)
-	}
-	if len(cardsRaw) == 0 {
-		return nil, nil
-	}
-	return cardsRaw, nil
-}
-
 // GetAllCardsHTTP ...
 func GetAllCardsHTTP(rsw http.ResponseWriter, req *http.Request) {
-	cards, err := getCards()
+	var err error
+	defer func() {
+		if err != nil {
+			log.Printf("[ERRO] Getting Cards: %v\n", err)
+			http.Error(rsw, "Error getting cards", http.StatusInternalServerError)
+		}
+	}()
+
+	cards, err := models.GetCards()
 	if err != nil {
-		log.Printf("[ERRO] Ao tentar buscar cards: %v", err)
-		http.Error(rsw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if len(cards) == 0 {
-		log.Printf("[WARN] Cards não encontrados")
+		log.Printf("[WARN] Cards not found")
 		http.NotFound(rsw, req)
 		return
 	}
 
 	cardsJSON, err := json.Marshal(cards)
 	if err != nil {
-		log.Printf("[ERRO] Ao tentar parsear a estrutura: %v", err)
-		http.Error(rsw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -143,45 +151,51 @@ func GetAllCardsHTTP(rsw http.ResponseWriter, req *http.Request) {
 
 // GetAllCardsWS ...
 func GetAllCardsWS(message *server.EventMessage) {
-	cards, err := getCards()
+	var err error
+	defer func() {
+		if err != nil {
+			log.Printf("[ERRO] Getting Cards: %v\n", err)
+			message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
+		}
+	}()
+
+	cards, err := models.GetCards()
 	if err != nil {
-		log.Printf("[ERRO] Ao tentar buscar cards: %v", err)
-		message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR", Data: nil})
+		return
 	}
 
 	if len(cards) == 0 {
-		log.Printf("[WARN] Cards não encontrados")
-		message.Client.SendMessage(&server.EventMessage{Event: "NOT_FOUND", Data: nil})
+		log.Printf("[WARN] Cards not found")
+		message.Client.SendMessage(&server.EventMessage{Event: "NOT_FOUND"})
 	}
 
 	message.Client.SendMessage(&server.EventMessage{Event: "GET_CARDS_SUCCESSFUL", Data: cards})
 }
 
-func updateCard(card *models.Card) (string, error) {
-	return models.UpdateCard(card)
-}
-
 // UpdateCardHTTP ...
 func UpdateCardHTTP(rsw http.ResponseWriter, req *http.Request) {
+	var err error
+	defer func() {
+		if err != nil {
+			log.Printf("[ERRO] Updating Cards: %v\n", err)
+			http.Error(rsw, "Error updating cards", http.StatusInternalServerError)
+		}
+	}()
+
 	cardRaw, err := ioutil.ReadAll(req.Body)
 	defer req.Body.Close()
 	if err != nil {
-		http.Error(rsw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	var cardOld models.Card
 	err = json.Unmarshal(cardRaw, &cardOld)
 	if err != nil {
-		log.Printf("[ERRO] Ao tentar atualizar card: %v", err)
-		http.Error(rsw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	cardUpdated, err := models.UpdateCard(&cardOld)
 	if err != nil {
-		log.Printf("[ERRO] Ao tentar atualizar card: %v", err)
-		http.Error(rsw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -190,38 +204,46 @@ func UpdateCardHTTP(rsw http.ResponseWriter, req *http.Request) {
 
 // UpdateCardWS ...
 func UpdateCardWS(message *server.EventMessage) {
+	var err error
+	defer func() {
+		if err != nil {
+			log.Printf("[ERRO] Updating Cards: %v\n", err)
+			message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
+		}
+	}()
+
 	var cardOld models.Card
-	err := mapstructure.Decode(message.Data, &cardOld)
+	err = mapstructure.Decode(message.Data, &cardOld)
 	if err != nil {
-		message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR", Data: nil})
 		return
 	}
 
 	cardUpdated, err := models.UpdateCard(&cardOld)
 	if err != nil {
-		log.Printf("[ERRO] Ao tentar atualizar card: %v", err)
-		message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR", Data: nil})
 		return
 	}
 
 	message.Client.SendMessage(&server.EventMessage{Event: "UPDATE_CARD_SUCCESSFUL", Data: cardUpdated})
 }
 
-func deleteCard(cardID string) (string, error) {
-	return models.DeleteCard(cardID)
-}
-
 // DeleteCardHTTP ...
 func DeleteCardHTTP(rsw http.ResponseWriter, req *http.Request) {
+	var err error
+	defer func() {
+		if err != nil {
+			log.Printf("[ERRO] Deleting Cards: %v\n", err)
+			http.Error(rsw, "Error deleting cards", http.StatusInternalServerError)
+		}
+	}()
+
 	cardID := mux.Vars(req)["id"]
 	if cardID == "" {
-		http.Error(rsw, "Necessário passar o ID do Card", http.StatusBadRequest)
+		http.Error(rsw, "Card ID is null", http.StatusBadRequest)
 		return
 	}
 
-	cardID, err := deleteCard(cardID)
+	cardID, err = models.DeleteCard(cardID)
 	if err != nil {
-		http.Error(rsw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -230,12 +252,16 @@ func DeleteCardHTTP(rsw http.ResponseWriter, req *http.Request) {
 
 // DeleteCardWS ...
 func DeleteCardWS(message *server.EventMessage) {
-	cardID := message.Data.(string)
+	var err error
+	defer func() {
+		if err != nil {
+			log.Printf("[ERRO] Deleting Cards: %v\n", err)
+			message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
+		}
+	}()
 
-	cardID, err := deleteCard(cardID)
+	cardID, err := models.DeleteCard(message.Data.(string))
 	if err != nil {
-		log.Printf("[ERRO] Ao tentar atualizar card: %v", err)
-		message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR", Data: nil})
 		return
 	}
 
