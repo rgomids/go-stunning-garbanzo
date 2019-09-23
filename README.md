@@ -44,16 +44,16 @@ Uma requisição de criação de card seria:
  "data": {
     "name": "",
     "mana_cost": {
-        "any": 0,
-        "black": 0,
-        "blue": 0,
-        "green": 0,
-        "red": 0,
-        "white": 0
+      "any": 0,
+      "black": 0,
+      "blue": 0,
+      "green": 0,
+      "red": 0,
+      "white": 0
     },
     "image": {
-        "path": "",
-        "author": ""
+      "path": "",
+      "author": ""
     },
     "type": "",
     "spells": {},
@@ -72,3 +72,8 @@ Ou uma requisição para apagar um card:
 ## Conceito
 A ideia por trás desse projeto é implementar meus conhecimentos sobre go, e testar as conexões (WS e HTTP).
 Vou fazer testes e elaborar alguns gráficos para demosntrar quais as vantagens de cada uma. Mas por enquanto seguimos com o projeto em forma de demonstração.
+
+## TODO
+ - Implementar BROADCAST
+  - Esse sistema funciona de uma forma bastante simples, pois para cada requisição são criados dois "hubs" por usuário, em que eles eventualmente ouvem algo do client ou enviam algo para o client. A ideia é permitir que um grupo de usuários possa ao fazer qualquer tipo de atualização e essa por sua vez, influencie nos registros do grupo inteiro. Por exemplo, imagine que o usuário X que percence ao grupo 0 está olhando uma tela com os cards. Em seguida o usuário Y que pertence ao grupo 0, acessa essa mesma tela e acaba atualizando a informação de um dos cards. Com o broadcast, podemos atualizar automaticamente os cards dos dois usuário. E coletar essa atualização numa aplicação no Frontend não seria nenhum problema com Listeners sendo executados. Essa é mais uma forma de utilizar esse protocolo.
+- Atualizar os logs
