@@ -17,7 +17,7 @@ Ao acessar o site coloque no input **Location**: ws://localhost:8080/ws; Em segu
 Para fazer as requisições via Websocket utilize esse padrão:
 ```json
 {
- "event": "GET_CARDS",
+ "event": "",
  "data": ""
 }
 ```
@@ -41,8 +41,7 @@ Uma requisição de criação de card seria:
 ```json
 {
  "event": "ADD_CARD",
- "data": "
-  {
+ "data": {
     "name": "",
     "mana_cost": {
         "any": 0,
@@ -60,7 +59,6 @@ Uma requisição de criação de card seria:
     "spells": {},
     "detail": ""
   }
- "
 }
 ```
 Ou uma requisição para apagar um card:
