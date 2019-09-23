@@ -7,3 +7,7 @@ br: build
 
 run:
 	@go run command/main.go
+
+install:
+	@cd command; \
+	go get

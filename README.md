@@ -3,7 +3,7 @@
 
 ## Configurar
 Para configurar o projeto em sua maquina tenha a versão do `go` >= `go1.12`;
-Utilize `go get` para abaixar todas as dependências;
+Utilize `make install` para abaixar todas as dependências;
 Para inciar o server:
  - *Run*: Basta estar na pasta raiz do projeto e usar o comando: `make run`;
  - *Build*: Basta estar na pasta raiz do projeto e usar o comando: `make` ou `make build`;
