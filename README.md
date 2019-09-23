@@ -12,8 +12,8 @@ Para inciar o server:
 ## Utilização
 Recomendo a utilização do [Postman](https://www.getpostman.com/), para realizar as chamadas de testes. Existe inclusive um arquivo já configurado com todas as chamadas necessárias para esse projeto, você pode encontra-lo [aqui](https://github.com/RafaelGomides/go-stunning-garbanzo/blob/master/configurations/go-stunning-garbanzo.postman_collection.json).
 Para realizar as chamadas websocket recomendo a utilização desse [site](https://www.websocket.org/echo.html). Minha ideia é criar uma interface bem simples e funcional para realizar essas chamadas, dentro do próprio projeto. Já existe um esboço disso em `views` sinta-se livre para mandar um PR com algo funcionando.
-Para que a configuração do WS funcione, necessário estar com o servidor sendo executado. `make run` ou `make rb`
-Ao acessar o site coloque em **Location**: ws://localhost:8080/ws; Em seguida, clique em **Connect**, quando fizer isso perceba se aparece **"CONNECTED"** no console ao lado direito do botão. Se aparecer, está tudo pronto.
+Para que a configuração do WS funcione, necessário estar com o servidor sendo executado; `make run` ou `make rb`.
+Ao acessar o site coloque no input **Location**: ws://localhost:8080/ws; Em seguida, clique em **Connect**, quando fizer isso perceba se aparece **"CONNECTED"** no console ao lado direito do botão. Se aparecer, está tudo pronto.
 Para fazer as requisições via Websocket utilize esse padrão:
 ```json
 {
