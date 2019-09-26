@@ -74,4 +74,4 @@ A ideia por trás desse projeto é implementar meus conhecimentos sobre go, e te
 Vou fazer testes e elaborar alguns gráficos para demosntrar quais as vantagens de cada uma. Mas por enquanto seguimos com o projeto em forma de demonstração.
 
 ## TODO
-Acesse a pagina de [Issues](https://github.com/RafaelGomides/go-stunning-garbanzo/issues)
+Acesse a página de [Issues](https://github.com/RafaelGomides/go-stunning-garbanzo/issues)
