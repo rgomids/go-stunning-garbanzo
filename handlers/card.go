@@ -63,7 +63,7 @@ func AddCardWS(message *server.EventMessage) {
 		return
 	}
 
-	message.Client.SendMessage(&server.EventMessage{Event: "ADD_CARD_SUCCESSFUL", Data: cardID})
+	message.Client.SendBroadcast(&server.EventMessage{Event: "ADD_CARD_SUCCESSFUL", Data: cardID})
 }
 
 // GetCardHTTP ...
@@ -223,7 +223,7 @@ func UpdateCardWS(message *server.EventMessage) {
 		return
 	}
 
-	message.Client.SendMessage(&server.EventMessage{Event: "UPDATE_CARD_SUCCESSFUL", Data: cardUpdated})
+	message.Client.SendBroadcast(&server.EventMessage{Event: "UPDATE_CARD_SUCCESSFUL", Data: cardUpdated})
 }
 
 // DeleteCardHTTP ...
@@ -265,5 +265,5 @@ func DeleteCardWS(message *server.EventMessage) {
 		return
 	}
 
-	message.Client.SendMessage(&server.EventMessage{Event: "DELETE_CARD_SUCCESSFUL", Data: cardID})
+	message.Client.SendBroadcast(&server.EventMessage{Event: "DELETE_CARD_SUCCESSFUL", Data: cardID})
 }

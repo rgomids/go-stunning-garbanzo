@@ -9,11 +9,51 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+var (
+	// ClientGroupsLength é o tamanho dos grupos que estão no Hub
+	ClientGroupsLength = 5
+)
+
+// ClientGroup é responsável por manter
+// as informações dos usuários do mesmo grupo
+// para que possam fazer broadcast das mensagens
+type ClientGroup struct {
+	// O ID do grupo serve para identifica-lo em meio a outros grupos
+	ID string
+	// Lista com todas as sessões de clientes conectados nesse grupo
+	ClientSessions []*ClientSession
+}
+
+// NewClientGroup retorna um novo grupo sem sessões
+func NewClientGroup(groupID string) *ClientGroup {
+	if groupID == "" {
+		return &ClientGroup{
+			ID: utils.GenerateULID(),
+		}
+	}
+	return &ClientGroup{
+		ID: groupID,
+	}
+}
+
+// AddClientSession coloca uma sessão nova dentro do grupo
+func (cg *ClientGroup) AddClientSession(clientSession *ClientSession) {
+	cg.ClientSessions = append(cg.ClientSessions, clientSession)
+}
+
+func (cg *ClientGroup) sendMessageToGroup(message *EventMessage) {
+	for _, clientSession := range cg.ClientSessions {
+		clientSession.SendMessage(message)
+	}
+}
+
 // ClientSession é responsável por manter as
 // informações do usuário que fez a solicitação
 type ClientSession struct {
 	// ID serve para diferencia-lo dos outros dãã...
 	ID string
+	// Esse é o grupo que esse client está inserido
+	Group string
 	// WebsocketConnection carrega a conexão WS do cliente para que ele possa continuar se comunicando
 	WebsocketConnection *websocket.Conn
 	// SendResponse envia para o usuário as respostas das chamadas
@@ -43,6 +83,11 @@ func (cs *ClientSession) SendMessage(message *EventMessage) {
 	cs.SendResponse <- msg
 }
 
+// SendBroadcast envia uma mensagem no padrão EventMessage para todos os Clients do mesmo grupo
+func (cs *ClientSession) SendBroadcast(message *EventMessage) {
+	cs.EventsHub.ClientGroups[cs.Group].sendMessageToGroup(message)
+}
+
 // ReadFromSocket Pega as mensagens que vem do websocket
 func (cs *ClientSession) ReadFromSocket() {
 	eventMessageRaw := &EventMessage{}
@@ -52,7 +97,7 @@ func (cs *ClientSession) ReadFromSocket() {
 			log.Printf("[ERRO] ReadFromSocket can't read message: %v\n", err)
 		}
 		cs.SendResponse <- []byte(fmt.Sprintf(`{"event": "%s_PROCESSING"}`, eventMessageRaw.Event))
-		go log.Panicf("[WS] New Event: %s\n", eventMessageRaw.Event)
+		go log.Printf("[WS] New Event: %s\n", eventMessageRaw.Event)
 		eventMessageRaw.Client = cs
 		cs.EventsHub.Messaging <- eventMessageRaw
 	}
@@ -102,6 +147,13 @@ type EventHub struct {
 	Finish chan bool
 	// Essa é a lista com todos os Handlers
 	Handlers *EventHandlers
+	// Armazena todos os grupos de mensagem
+	ClientGroups map[string]*ClientGroup
+}
+
+// AddGroup update group list with one new group
+func (eh *EventHub) AddGroup(clientGroup *ClientGroup) {
+	eh.ClientGroups[clientGroup.ID] = clientGroup
 }
 
 // EventHandlers carrega a lista com todas as possiveis
@@ -118,6 +170,7 @@ func NewEventHub() *EventHub {
 		Handlers: &EventHandlers{
 			HandlerList: make(map[string]func(*EventMessage)),
 		},
+		ClientGroups: make(map[string]*ClientGroup, ClientGroupsLength),
 	}
 }
 

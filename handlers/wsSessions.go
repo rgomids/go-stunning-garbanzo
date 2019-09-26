@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
@@ -23,6 +24,27 @@ func ServeWs(hub *server.EventHub, w http.ResponseWriter, r *http.Request) {
 	newClientSes := server.NewClientSession()
 	newClientSes.WebsocketConnection = wsConn
 	newClientSes.EventsHub = hub
+
+	groupID := mux.Vars(r)["group_id"]
+	if groupID == "" {
+		newClientSes.Group = addClientGroup(groupID, newClientSes, hub)
+	} else {
+		group, isAdded := hub.ClientGroups[groupID]
+		if isAdded {
+			group.AddClientSession(newClientSes)
+		} else {
+			addClientGroup(groupID, newClientSes, hub)
+		}
+		newClientSes.Group = groupID
+	}
+
 	go newClientSes.WriteToSocket()
 	newClientSes.ReadFromSocket()
+}
+
+func addClientGroup(groupID string, newClientSes *server.ClientSession, hub *server.EventHub) string {
+	newClientGroup := server.NewClientGroup(groupID)
+	newClientGroup.AddClientSession(newClientSes)
+	hub.AddGroup(newClientGroup)
+	return newClientGroup.ID
 }
