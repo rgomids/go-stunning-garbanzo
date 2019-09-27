@@ -21,10 +21,10 @@ func init() {
 
 func routerWebsocket(r *mux.Router) {
 	eventHandlerRegistry()
-	r.HandleFunc("/ws/{group_id}", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		handlers.ServeWs(hub, w, r)
 	})
-	r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/ws/{group_id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.ServeWs(hub, w, r)
 	})
 }
