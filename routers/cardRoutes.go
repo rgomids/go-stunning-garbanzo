@@ -2,7 +2,7 @@ package routers
 
 import (
 	"go-stunning-garbanzo/handlers"
-	"go-stunning-garbanzo/server"
+	wsh "github.com/RafaelGomides/go-wsh"
 
 	"github.com/gorilla/mux"
 )
@@ -15,7 +15,7 @@ func cardRoutesHTTP(r *mux.Router) {
 	r.HandleFunc("/card/{id}", handlers.DeleteCardHTTP).Methods("DELETE")
 }
 
-func cardRoutesWS(h *server.EventHub) {
+func cardRoutesWS(h *wsh.EventHub) {
 	h.AddHandler("ADD_CARD", handlers.AddCardWS)
 	h.AddHandler("GET_CARD", handlers.GetCardWS)
 	h.AddHandler("GET_CARDS", handlers.GetAllCardsWS)

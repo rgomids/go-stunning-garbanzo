@@ -2,20 +2,21 @@ package routers
 
 import (
 	"go-stunning-garbanzo/handlers"
-	"go-stunning-garbanzo/server"
 	"log"
 	"net/http"
+
+	wsh "github.com/RafaelGomides/go-wsh"
 
 	"github.com/gorilla/mux"
 )
 
 var (
-	hub *server.EventHub
+	hub *wsh.EventHub
 )
 
 func init() {
 	log.Println("[INFO] Starting Websocket Hub")
-	hub = server.NewEventHub()
+	hub = wsh.NewEventHub()
 	go hub.Run()
 }
 

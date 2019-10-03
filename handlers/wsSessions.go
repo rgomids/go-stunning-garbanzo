@@ -1,27 +1,20 @@
 package handlers
 
 import (
-	"go-stunning-garbanzo/server"
 	"log"
 	"net/http"
 
+	wsh "github.com/RafaelGomides/go-wsh"
 	"github.com/gorilla/mux"
-	"github.com/gorilla/websocket"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin:     func(r *http.Request) bool { return true },
-}
-
 // ServeWs Cria as sessões
-func ServeWs(hub *server.EventHub, w http.ResponseWriter, r *http.Request) {
-	wsConn, err := upgrader.Upgrade(w, r, nil)
+func ServeWs(hub *wsh.EventHub, w http.ResponseWriter, r *http.Request) {
+	wsConn, err := wsh.Upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Printf("[ERRO] Creating websocket session: %v", err)
 	}
-	newClientSes := server.NewClientSession()
+	newClientSes := wsh.NewClientSession()
 	newClientSes.WebsocketConnection = wsConn
 	newClientSes.EventsHub = hub
 
@@ -42,8 +35,8 @@ func ServeWs(hub *server.EventHub, w http.ResponseWriter, r *http.Request) {
 	newClientSes.ReadFromSocket()
 }
 
-func addClientGroup(groupID string, newClientSes *server.ClientSession, hub *server.EventHub) string {
-	newClientGroup := server.NewClientGroup(groupID)
+func addClientGroup(groupID string, newClientSes *wsh.ClientSession, hub *wsh.EventHub) string {
+	newClientGroup := wsh.NewClientGroup(groupID)
 	newClientGroup.AddClientSession(newClientSes)
 	hub.AddGroup(newClientGroup)
 	return newClientGroup.ID

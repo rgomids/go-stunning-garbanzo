@@ -3,10 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"go-stunning-garbanzo/models"
-	"go-stunning-garbanzo/server"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	wsh "github.com/RafaelGomides/go-wsh"
 
 	"github.com/gorilla/mux"
 	"github.com/mitchellh/mapstructure"
@@ -43,12 +44,12 @@ func AddCardHTTP(rsw http.ResponseWriter, req *http.Request) {
 }
 
 // AddCardWS ...
-func AddCardWS(message *server.EventMessage) {
+func AddCardWS(message *wsh.EventMessage) {
 	var err error
 	defer func() {
 		if err != nil {
 			log.Printf("[ERRO] Adding Card: %v\n", err)
-			message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
+			message.Client.SendMessage(&wsh.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
 		}
 	}()
 	var card models.Card
@@ -63,7 +64,7 @@ func AddCardWS(message *server.EventMessage) {
 		return
 	}
 
-	message.Client.SendBroadcast(&server.EventMessage{Event: "ADD_CARD_SUCCESSFUL", Data: cardID})
+	message.Client.SendBroadcast(&wsh.EventMessage{Event: "ADD_CARD_SUCCESSFUL", Data: cardID})
 }
 
 // GetCardHTTP ...
@@ -96,18 +97,18 @@ func GetCardHTTP(rsw http.ResponseWriter, req *http.Request) {
 }
 
 // GetCardWS ...
-func GetCardWS(message *server.EventMessage) {
+func GetCardWS(message *wsh.EventMessage) {
 	var err error
 	defer func() {
 		if err != nil {
 			log.Printf("[ERRO] Getting Card: %v\n", err)
-			message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
+			message.Client.SendMessage(&wsh.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
 		}
 	}()
 
 	cardID := message.Data.(string)
 	if cardID == "" {
-		message.Client.SendMessage(&server.EventMessage{Event: "BAD_REQUEST", Data: "Card ID is null"})
+		message.Client.SendMessage(&wsh.EventMessage{Event: "BAD_REQUEST", Data: "Card ID is null"})
 		return
 	}
 
@@ -116,7 +117,7 @@ func GetCardWS(message *server.EventMessage) {
 		return
 	}
 
-	message.Client.SendMessage(&server.EventMessage{Event: "GET_CARD_SUCCESSFUL", Data: card})
+	message.Client.SendMessage(&wsh.EventMessage{Event: "GET_CARD_SUCCESSFUL", Data: card})
 
 }
 
@@ -150,12 +151,12 @@ func GetAllCardsHTTP(rsw http.ResponseWriter, req *http.Request) {
 }
 
 // GetAllCardsWS ...
-func GetAllCardsWS(message *server.EventMessage) {
+func GetAllCardsWS(message *wsh.EventMessage) {
 	var err error
 	defer func() {
 		if err != nil {
 			log.Printf("[ERRO] Getting Cards: %v\n", err)
-			message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
+			message.Client.SendMessage(&wsh.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
 		}
 	}()
 
@@ -166,10 +167,10 @@ func GetAllCardsWS(message *server.EventMessage) {
 
 	if len(cards) == 0 {
 		log.Printf("[WARN] Cards not found")
-		message.Client.SendMessage(&server.EventMessage{Event: "NOT_FOUND"})
+		message.Client.SendMessage(&wsh.EventMessage{Event: "NOT_FOUND"})
 	}
 
-	message.Client.SendMessage(&server.EventMessage{Event: "GET_CARDS_SUCCESSFUL", Data: cards})
+	message.Client.SendMessage(&wsh.EventMessage{Event: "GET_CARDS_SUCCESSFUL", Data: cards})
 }
 
 // UpdateCardHTTP ...
@@ -203,12 +204,12 @@ func UpdateCardHTTP(rsw http.ResponseWriter, req *http.Request) {
 }
 
 // UpdateCardWS ...
-func UpdateCardWS(message *server.EventMessage) {
+func UpdateCardWS(message *wsh.EventMessage) {
 	var err error
 	defer func() {
 		if err != nil {
 			log.Printf("[ERRO] Updating Cards: %v\n", err)
-			message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
+			message.Client.SendMessage(&wsh.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
 		}
 	}()
 
@@ -223,7 +224,7 @@ func UpdateCardWS(message *server.EventMessage) {
 		return
 	}
 
-	message.Client.SendBroadcast(&server.EventMessage{Event: "UPDATE_CARD_SUCCESSFUL", Data: cardUpdated})
+	message.Client.SendBroadcast(&wsh.EventMessage{Event: "UPDATE_CARD_SUCCESSFUL", Data: cardUpdated})
 }
 
 // DeleteCardHTTP ...
@@ -251,12 +252,12 @@ func DeleteCardHTTP(rsw http.ResponseWriter, req *http.Request) {
 }
 
 // DeleteCardWS ...
-func DeleteCardWS(message *server.EventMessage) {
+func DeleteCardWS(message *wsh.EventMessage) {
 	var err error
 	defer func() {
 		if err != nil {
 			log.Printf("[ERRO] Deleting Cards: %v\n", err)
-			message.Client.SendMessage(&server.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
+			message.Client.SendMessage(&wsh.EventMessage{Event: "INTERNAL_SERVER_ERROR"})
 		}
 	}()
 
@@ -265,5 +266,5 @@ func DeleteCardWS(message *server.EventMessage) {
 		return
 	}
 
-	message.Client.SendBroadcast(&server.EventMessage{Event: "DELETE_CARD_SUCCESSFUL", Data: cardID})
+	message.Client.SendBroadcast(&wsh.EventMessage{Event: "DELETE_CARD_SUCCESSFUL", Data: cardID})
 }
